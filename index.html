@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Warrior System</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#050505;
+      color:white;
+      padding:30px;
+    }
+
+    h1{
+      text-align:center;
+      font-size:58px;
+      margin-bottom:40px;
+      letter-spacing:4px;
+
+      color:#facc15;
+
+      text-shadow:
+      0 0 10px #facc15,
+      0 0 25px orange;
+    }
+
+    .container{
+      display:flex;
+      gap:25px;
+      align-items:flex-start;
+    }
+
+    .cards{
+      flex:1;
+
+      display:grid;
+
+      grid-template-columns:
+      repeat(auto-fill,minmax(280px,1fr));
+
+      gap:22px;
+    }
+
+    .card{
+      background:#0f0f0f;
+
+      border-radius:20px;
+
+      overflow:hidden;
+
+      border:1px solid #27272a;
+
+      box-shadow:
+      0 0 25px rgba(255,140,0,0.12);
+    }
+
+    .card img{
+      width:100%;
+      height:180px;
+      object-fit:cover;
+
+      border-bottom:
+      2px solid #f97316;
+    }
+
+    .card-content{
+      padding:18px;
+    }
+
+    .card-header{
+      margin-bottom:18px;
+    }
+
+    .card-header h2{
+      font-size:30px;
+      color:#facc15;
+      letter-spacing:1px;
+    }
+
+    .goal{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+
+      background:#18181b;
+
+      padding:12px;
+
+      border-radius:12px;
+
+      border:1px solid #27272a;
+
+      margin-bottom:12px;
+    }
+
+    .goal-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .goal input{
+      width:18px;
+      height:18px;
+      accent-color:#22c55e;
+    }
+
+    .goal span{
+      font-size:15px;
+      letter-spacing:0.5px;
+    }
+
+    .delete-btn{
+      border:none;
+      background:none;
+      color:#ef4444;
+      cursor:pointer;
+      font-size:18px;
+      font-weight:bold;
+    }
+
+    .add-goal{
+      width:100%;
+
+      border:none;
+
+      background:
+      linear-gradient(
+        90deg,
+        #ea580c,
+        #f97316
+      );
+
+      color:white;
+
+      padding:12px;
+
+      border-radius:12px;
+
+      cursor:pointer;
+
+      margin-top:12px;
+
+      font-weight:bold;
+
+      letter-spacing:1px;
+    }
+
+    .done-text{
+      margin-top:16px;
+      color:#a1a1aa;
+      font-weight:bold;
+      letter-spacing:1px;
+    }
+
+    .stats{
+      width:340px;
+
+      background:#0f0f0f;
+
+      padding:24px;
+
+      border-radius:20px;
+
+      border:1px solid #27272a;
+
+      box-shadow:
+      0 0 25px rgba(255,140,0,0.12);
+
+      position:sticky;
+      top:20px;
+    }
+
+    .stats h2{
+      margin-bottom:25px;
+      color:#facc15;
+      font-size:32px;
+      letter-spacing:2px;
+    }
+
+    .stats p{
+      margin-bottom:15px;
+      color:#d4d4d8;
+    }
+
+    .progress-bar{
+      width:100%;
+      height:22px;
+
+      background:#27272a;
+
+      border-radius:999px;
+
+      overflow:hidden;
+
+      margin-top:20px;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+
+      background:
+      linear-gradient(
+        90deg,
+        #22c55e,
+        #eab308,
+        #f97316
+      );
+    }
+
+    .reset-btn{
+      margin-top:25px;
+
+      width:100%;
+
+      border:none;
+
+      background:
+      linear-gradient(
+        90deg,
+        #dc2626,
+        #ef4444
+      );
+
+      color:white;
+
+      padding:13px;
+
+      border-radius:12px;
+
+      cursor:pointer;
+
+      font-weight:bold;
+
+      letter-spacing:1px;
+    }
+
+    @media(max-width:1000px){
+
+      .container{
+        flex-direction:column;
+      }
+
+      .stats{
+        width:100%;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <h1>⚡ WARRIOR SYSTEM ⚡</h1>
+
+  <div class="container">
+
+    <div class="cards" id="cards"></div>
+
+    <div class="stats">
+
+      <h2>WEEKLY POWER</h2>
+
+      <p id="totalGoals">Total Missions: 0</p>
+
+      <p id="completedGoals">Completed: 0</p>
+
+      <p id="progressText">Power Level: 0%</p>
+
+      <div class="progress-bar">
+
+        <div
+          class="progress-fill"
+          id="progressFill">
+        </div>
+
+      </div>
+
+      <button
+        onclick="weeklyReset()"
+        class="reset-btn"
+      >
+        RESET WEEK
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/*
+PASTE YOUR FIREBASE CONFIG HERE
+*/
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDrRTOMBObjtMiEFEH4KAbKnuU0iImdXe0",
+  authDomain: "warrior-system.firebaseapp.com",
+  projectId: "warrior-system",
+  storageBucket: "warrior-system.firebasestorage.app",
+  messagingSenderId: "497973709801",
+  appId: "1:497973709801:web:9225d774e66634daa2d978",
+  measurementId: "G-BJE5B9HFQY"
+};
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getFirestore(app);
+
+/*
+IMAGES
+*/
+
+const animeImages = [
+
+  // Monday — Cristiano Ronaldo
+  "https://wallpapercave.com/wp/wp9986447.jpg",
+
+  // Tuesday — Virat Kohli
+  "https://wallpapercave.com/uwp/uwp5005515.jpeg",
+
+  // Wednesday — UFC fighter
+  "https://wallpapercave.com/uwp/uwp5033516.jpeg",
+
+  // Thursday — Ronaldo dark aesthetic
+  "https://wallpapercave.com/uwp/uwp5033524.jpeg",
+
+  // Friday — Virat aggressive vibe
+  "https://wallpapercave.com/uwp/uwp4975217.jpeg",
+
+  // Saturday — Conor McGregor
+  "https://wallpapercave.com/uwp/uwp4975223.jpeg",
+
+  // Sunday — Messi vs Ronaldo
+  "https://wallpapercave.com/uwp/uwp4975225.jpeg"
+
+];
+
+/*
+DEFAULT DATA
+*/
+
+const defaultData = [
+
+  {
+    day:"Monday",
+    image:animeImages[0],
+    goals:[]
+  },
+
+  {
+    day:"Tuesday",
+    image:animeImages[1],
+    goals:[]
+  },
+
+  {
+    day:"Wednesday",
+    image:animeImages[2],
+    goals:[]
+  },
+
+  {
+    day:"Thursday",
+    image:animeImages[3],
+    goals:[]
+  },
+
+  {
+    day:"Friday",
+    image:animeImages[4],
+    goals:[]
+  },
+
+  {
+    day:"Saturday",
+    image:animeImages[5],
+    goals:[]
+  },
+
+  {
+    day:"Sunday",
+    image:animeImages[6],
+    goals:[]
+  }
+
+];
+
+let data = [];
+
+/*
+LOAD DATA
+*/
+
+async function loadData(){
+
+  const ref =
+    doc(db, "warrior", "weekly");
+
+  const snap =
+    await getDoc(ref);
+
+  if(snap.exists()){
+
+    data = snap.data().days;
+
+  }else{
+
+    data = defaultData;
+
+    await saveData();
+
+  }
+
+  render();
+
+}
+
+/*
+SAVE DATA
+*/
+
+async function saveData(){
+
+  const ref =
+    doc(db, "warrior", "weekly");
+
+  await setDoc(ref, {
+
+    days:data
+
+  });
+
+}
+
+/*
+RENDER
+*/
+
+function render(){
+
+  const cards =
+    document.getElementById("cards");
+
+  cards.innerHTML = "";
+
+  let total = 0;
+
+  let completed = 0;
+
+  data.forEach((dayObj, dayIndex)=>{
+
+    total += dayObj.goals.length;
+
+    completed +=
+      dayObj.goals.filter(g=>g.done).length;
+
+    const card =
+      document.createElement("div");
+
+    card.className = "card";
+
+    card.innerHTML = `
+
+      <img src="${dayObj.image}">
+
+      <div class="card-content">
+
+        <div class="card-header">
+
+          <h2>${dayObj.day}</h2>
+
+        </div>
+
+        <div id="goals-${dayIndex}">
+        </div>
+
+        <button
+          class="add-goal"
+          onclick="addGoal(${dayIndex})"
+        >
+          + ADD MISSION
+        </button>
+
+        <p class="done-text">
+
+          COMPLETED:
+          ${dayObj.goals.filter(g=>g.done).length}
+          /
+          ${dayObj.goals.length}
+
+        </p>
+
+      </div>
+
+    `;
+
+    cards.appendChild(card);
+
+    const goalsContainer =
+      document.getElementById(
+        `goals-${dayIndex}`
+      );
+
+    dayObj.goals.forEach((goal, goalIndex)=>{
+
+      const goalDiv =
+        document.createElement("div");
+
+      goalDiv.className = "goal";
+
+      goalDiv.innerHTML = `
+
+        <div class="goal-left">
+
+          <input
+            type="checkbox"
+
+            ${goal.done ? "checked" : ""}
+
+            onchange=
+            "toggleGoal(${dayIndex}, ${goalIndex})"
+          >
+
+          <span>${goal.text}</span>
+
+        </div>
+
+        <button
+          class="delete-btn"
+          onclick=
+          "deleteGoal(${dayIndex}, ${goalIndex})"
+        >
+          ✖
+        </button>
+
+      `;
+
+      goalsContainer.appendChild(goalDiv);
+
+    });
+
+  });
+
+  const percent =
+
+    total === 0
+
+    ? 0
+
+    : Math.round(
+        (completed / total) * 100
+      );
+
+  document.getElementById(
+    "totalGoals"
+  ).innerText =
+    `Total Missions: ${total}`;
+
+  document.getElementById(
+    "completedGoals"
+  ).innerText =
+    `Completed: ${completed}`;
+
+  document.getElementById(
+    "progressText"
+  ).innerText =
+    `Power Level: ${percent}%`;
+
+  document.getElementById(
+    "progressFill"
+  ).style.width =
+    percent + "%";
+
+}
+
+/*
+GOAL FUNCTIONS
+*/
+
+window.toggleGoal =
+async function(dayIndex, goalIndex){
+
+  data[dayIndex]
+  .goals[goalIndex]
+  .done =
+
+  !data[dayIndex]
+  .goals[goalIndex]
+  .done;
+
+  await saveData();
+
+  render();
+
+};
+
+window.addGoal =
+async function(dayIndex){
+
+  const text =
+    prompt("Enter mission");
+
+  if(!text) return;
+
+  data[dayIndex]
+  .goals
+  .push({
+
+    text,
+    done:false
+
+  });
+
+  await saveData();
+
+  render();
+
+};
+
+window.deleteGoal =
+async function(dayIndex, goalIndex){
+
+  data[dayIndex]
+  .goals
+  .splice(goalIndex,1);
+
+  await saveData();
+
+  render();
+
+};
+
+window.weeklyReset =
+async function(){
+
+  const confirmReset =
+    confirm(
+      "Reset all missions?"
+    );
+
+  if(!confirmReset) return;
+
+  data.forEach(day => {
+
+    day.goals.forEach(goal => {
+
+      goal.done = false;
+
+    });
+
+  });
+
+  await saveData();
+
+  render();
+
+};
+
+loadData();
+
+</script>
+
+
+</body>
+</html>
