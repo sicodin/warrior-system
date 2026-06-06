@@ -3,691 +3,558 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
   <title>Warrior System</title>
-
   <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+    body { background:#050505; color:white; padding:30px; }
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
+    h1 {
+      text-align:center; font-size:58px; margin-bottom:40px; letter-spacing:4px;
+      color:#facc15; text-shadow:0 0 10px #facc15, 0 0 25px orange;
     }
 
-    body{
-      background:#050505;
-      color:white;
-      padding:30px;
-    }
+    /* ── LAYOUT ── */
+    .container { display:flex; gap:25px; align-items:flex-start; }
+    .left-col  { flex:1; display:flex; flex-direction:column; gap:25px; }
+    .cards     { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:22px; }
 
-    h1{
-      text-align:center;
-      font-size:58px;
-      margin-bottom:40px;
-      letter-spacing:4px;
+    /* ── DAY CARD ── */
+    .card { background:#0f0f0f; border-radius:20px; overflow:hidden; border:1px solid #27272a; box-shadow:0 0 25px rgba(255,140,0,0.12); }
+    .card img { width:100%; height:180px; object-fit:cover; border-bottom:2px solid #f97316; }
+    .card-content { padding:18px; }
+    .card-header { margin-bottom:18px; }
+    .card-header h2 { font-size:30px; color:#facc15; letter-spacing:1px; }
 
-      color:#facc15;
-
-      text-shadow:
-      0 0 10px #facc15,
-      0 0 25px orange;
-    }
-
-    .container{
-      display:flex;
-      gap:25px;
-      align-items:flex-start;
-    }
-
-    .cards{
-      flex:1;
-
-      display:grid;
-
-      grid-template-columns:
-      repeat(auto-fill,minmax(280px,1fr));
-
-      gap:22px;
-    }
-
-    .card{
+    /* ── GOALS CARD (the new one) ── */
+    .goals-card {
       background:#0f0f0f;
-
       border-radius:20px;
-
+      border:1px solid #7c3aed;
+      box-shadow:0 0 30px rgba(124,58,237,0.18);
       overflow:hidden;
-
-      border:1px solid #27272a;
-
-      box-shadow:
-      0 0 25px rgba(255,140,0,0.12);
     }
-
-    .card img{
-      width:100%;
-      height:180px;
-      object-fit:cover;
-
-      border-bottom:
-      2px solid #f97316;
+    .goals-card-banner {
+      width:100%; height:120px;
+      background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 50%,#7c3aed 100%);
+      display:flex; align-items:center; justify-content:center;
+      border-bottom:2px solid #7c3aed;
+      position:relative; overflow:hidden;
     }
-
-    .card-content{
-      padding:18px;
+    .goals-card-banner::before {
+      content:"🎯";
+      position:absolute; font-size:90px; opacity:0.08; right:-10px; bottom:-10px;
     }
-
-    .card-header{
-      margin-bottom:18px;
+    .goals-card-banner h2 {
+      font-size:28px; letter-spacing:3px; color:#c4b5fd;
+      text-shadow:0 0 15px #7c3aed;
     }
+    .goals-card-body { padding:18px; }
 
-    .card-header h2{
-      font-size:30px;
-      color:#facc15;
-      letter-spacing:1px;
-    }
-
-    .goal{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-
+    /* goal library item */
+    .lib-item {
       background:#18181b;
-
-      padding:12px;
-
       border-radius:12px;
-
-      border:1px solid #27272a;
-
-      margin-bottom:12px;
-    }
-
-    .goal-left{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .goal input{
-      width:18px;
-      height:18px;
-      accent-color:#22c55e;
-    }
-
-    .goal span{
-      font-size:15px;
-      letter-spacing:0.5px;
-    }
-
-    .delete-btn{
-      border:none;
-      background:none;
-      color:#ef4444;
-      cursor:pointer;
-      font-size:18px;
-      font-weight:bold;
-    }
-
-    .add-goal{
-      width:100%;
-
-      border:none;
-
-      background:
-      linear-gradient(
-        90deg,
-        #ea580c,
-        #f97316
-      );
-
-      color:white;
-
-      padding:12px;
-
-      border-radius:12px;
-
-      cursor:pointer;
-
-      margin-top:12px;
-
-      font-weight:bold;
-
-      letter-spacing:1px;
-    }
-
-    .done-text{
-      margin-top:16px;
-      color:#a1a1aa;
-      font-weight:bold;
-      letter-spacing:1px;
-    }
-
-    .stats{
-      width:340px;
-
-      background:#0f0f0f;
-
-      padding:24px;
-
-      border-radius:20px;
-
-      border:1px solid #27272a;
-
-      box-shadow:
-      0 0 25px rgba(255,140,0,0.12);
-
-      position:sticky;
-      top:20px;
-    }
-
-    .stats h2{
-      margin-bottom:25px;
-      color:#facc15;
-      font-size:32px;
-      letter-spacing:2px;
-    }
-
-    .stats p{
-      margin-bottom:15px;
-      color:#d4d4d8;
-    }
-
-    .progress-bar{
-      width:100%;
-      height:22px;
-
-      background:#27272a;
-
-      border-radius:999px;
-
+      border:1px solid #3f3f46;
+      margin-bottom:10px;
       overflow:hidden;
+      transition:border-color 0.2s;
+    }
+    .lib-item:hover { border-color:#7c3aed; }
+    .lib-item-header {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:12px 14px;
+    }
+    .lib-item-title {
+      font-size:15px; font-weight:bold; color:#e4e4e7; letter-spacing:0.5px;
+    }
+    .lib-item-desc {
+      font-size:12px; color:#71717a; line-height:1.5;
+      padding:0 14px 12px 14px;
+      border-top:1px solid #27272a;
+      padding-top:8px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .lib-item-desc.empty { display:none; }
 
-      margin-top:20px;
+    .lib-actions { display:flex; gap:6px; flex-shrink:0; align-items:center; }
+    .delete-btn { border:none; background:none; color:#ef4444; cursor:pointer; font-size:16px; font-weight:bold; }
+
+    /* lib expand button */
+    .lib-expand-btn { border:none; background:none; color:#71717a; cursor:pointer; font-size:12px; padding:2px 7px; border-radius:6px; white-space:nowrap; transition:color 0.2s,background 0.2s; }
+    .lib-expand-btn:hover { color:#c4b5fd; background:#27272a; }
+    .lib-expand-btn.open { color:#a78bfa; }
+
+    /* lib sub-goals panel */
+    .lib-sub-panel { border-top:1px solid #27272a; background:#0d0d10; padding:8px 14px 10px; display:none; }
+    .lib-sub-panel.open { display:block; }
+    .lib-sub-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #1a1a1e; }
+    .lib-sub-row:last-of-type { border-bottom:none; }
+    .lib-sub-row span { font-size:13px; color:#a1a1aa; word-break:break-word; flex:1; }
+    .lib-sub-row .delete-btn { font-size:13px; color:#7f1d1d; opacity:0.6; margin-left:8px; }
+    .lib-sub-row .delete-btn:hover { opacity:1; color:#ef4444; }
+    .lib-add-sub-btn { display:block; width:100%; border:1px dashed #3f3f46; background:transparent; color:#7c3aed; padding:5px; border-radius:8px; cursor:pointer; margin-top:8px; font-size:12px; font-weight:bold; transition:border-color 0.2s; }
+    .lib-add-sub-btn:hover { border-color:#7c3aed; color:#c4b5fd; }
+
+    .add-lib-btn {
+      width:100%; border:none;
+      background:linear-gradient(90deg,#6d28d9,#7c3aed);
+      color:white; padding:12px; border-radius:12px;
+      cursor:pointer; margin-top:4px; font-weight:bold; letter-spacing:1px;
     }
 
-    .progress-fill{
-      height:100%;
-      width:0%;
+    /* ── MISSION BLOCK (inside day cards) ── */
+    .mission-block { background:#18181b; border-radius:12px; border:1px solid #27272a; margin-bottom:12px; overflow:hidden; }
+    .goal { display:flex; justify-content:space-between; align-items:center; padding:12px; }
+    .goal-left { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
+    .goal input[type="checkbox"] { width:18px; height:18px; accent-color:#22c55e; flex-shrink:0; }
+    .goal span { font-size:15px; letter-spacing:0.5px; word-break:break-word; }
+    .goal-actions { display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:8px; }
 
-      background:
-      linear-gradient(
-        90deg,
-        #22c55e,
-        #eab308,
-        #f97316
-      );
+    .expand-btn { border:none; background:none; color:#71717a; cursor:pointer; font-size:13px; padding:2px 6px; border-radius:6px; white-space:nowrap; transition:color 0.2s,background 0.2s; }
+    .expand-btn:hover { color:#facc15; background:#27272a; }
+    .expand-btn.open { color:#f97316; }
+
+    /* sub-goals */
+    .sub-goals-panel { border-top:1px solid #27272a; background:#111113; padding:8px 12px 10px; display:none; }
+    .sub-goals-panel.open { display:block; }
+    .sub-goal { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid #1e1e22; }
+    .sub-goal:last-of-type { border-bottom:none; }
+    .sub-goal-left { display:flex; align-items:center; gap:8px; flex:1; min-width:0; }
+    .sub-goal input[type="checkbox"] { width:15px; height:15px; accent-color:#a78bfa; flex-shrink:0; }
+    .sub-goal span { font-size:13px; color:#a1a1aa; word-break:break-word; }
+    .sub-goal .delete-btn { font-size:14px; color:#7f1d1d; opacity:0.7; }
+    .sub-goal .delete-btn:hover { opacity:1; color:#ef4444; }
+
+    .sub-progress { margin-top:6px; height:4px; background:#27272a; border-radius:999px; overflow:hidden; }
+    .sub-progress-fill { height:100%; background:linear-gradient(90deg,#a78bfa,#f97316); transition:width 0.3s; }
+    .add-sub-btn { display:block; width:100%; border:1px dashed #3f3f46; background:transparent; color:#a78bfa; padding:6px; border-radius:8px; cursor:pointer; margin-top:8px; font-size:12px; font-weight:bold; }
+    .add-sub-btn:hover { border-color:#a78bfa; }
+
+    .add-goal-btn {
+      width:100%; border:none;
+      background:linear-gradient(90deg,#ea580c,#f97316);
+      color:white; padding:12px; border-radius:12px;
+      cursor:pointer; margin-top:12px; font-weight:bold; letter-spacing:1px;
     }
+    .done-text { margin-top:16px; color:#a1a1aa; font-weight:bold; letter-spacing:1px; font-size:13px; }
 
-    .reset-btn{
-      margin-top:25px;
+    /* ── STATS ── */
+    .stats { width:340px; background:#0f0f0f; padding:24px; border-radius:20px; border:1px solid #27272a; box-shadow:0 0 25px rgba(255,140,0,0.12); position:sticky; top:20px; }
+    .stats h2 { margin-bottom:25px; color:#facc15; font-size:32px; letter-spacing:2px; }
+    .stats p { margin-bottom:15px; color:#d4d4d8; }
+    .progress-bar { width:100%; height:22px; background:#27272a; border-radius:999px; overflow:hidden; margin-top:20px; }
+    .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#eab308,#f97316); transition:width 0.4s; }
+    .reset-btn { margin-top:25px; width:100%; border:none; background:linear-gradient(90deg,#dc2626,#ef4444); color:white; padding:13px; border-radius:12px; cursor:pointer; font-weight:bold; letter-spacing:1px; }
 
-      width:100%;
-
-      border:none;
-
-      background:
-      linear-gradient(
-        90deg,
-        #dc2626,
-        #ef4444
-      );
-
-      color:white;
-
-      padding:13px;
-
-      border-radius:12px;
-
-      cursor:pointer;
-
-      font-weight:bold;
-
-      letter-spacing:1px;
+    /* ── PICKER MODAL ── */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.75); z-index:1000;
+      align-items:center; justify-content:center;
     }
-
-    @media(max-width:1000px){
-
-      .container{
-        flex-direction:column;
-      }
-
-      .stats{
-        width:100%;
-      }
-
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:#0f0f0f; border:1px solid #7c3aed;
+      border-radius:20px; padding:28px; width:420px; max-width:90vw;
+      box-shadow:0 0 40px rgba(124,58,237,0.35);
+      max-height:80vh; overflow-y:auto;
     }
+    .modal h3 { color:#c4b5fd; font-size:20px; letter-spacing:2px; margin-bottom:18px; }
+    .picker-item {
+      display:flex; align-items:center; justify-content:space-between;
+      background:#18181b; border:1px solid #3f3f46; border-radius:10px;
+      padding:12px 14px; margin-bottom:10px; cursor:pointer;
+      transition:border-color 0.2s, background 0.2s;
+    }
+    .picker-item:hover { border-color:#7c3aed; background:#1e1b2e; }
+    .picker-item span { font-size:14px; color:#e4e4e7; }
+    .picker-item .pick-btn {
+      border:none; background:linear-gradient(90deg,#6d28d9,#7c3aed);
+      color:white; padding:5px 12px; border-radius:7px; cursor:pointer;
+      font-size:12px; font-weight:bold; white-space:nowrap;
+    }
+    .modal-close {
+      width:100%; border:none; background:#27272a; color:#a1a1aa;
+      padding:11px; border-radius:10px; cursor:pointer; margin-top:6px;
+      font-weight:bold; letter-spacing:1px;
+    }
+    .modal-empty { color:#52525b; text-align:center; padding:20px 0; font-size:14px; }
 
+    @media(max-width:1000px) { .container{flex-direction:column;} .stats{width:100%;} }
   </style>
 </head>
-
 <body>
 
   <h1>⚡ WARRIOR SYSTEM ⚡</h1>
 
   <div class="container">
-
-    <div class="cards" id="cards"></div>
-
-    <div class="stats">
-
-      <h2>WEEKLY POWER</h2>
-
-      <p id="totalGoals">Total Missions: 0</p>
-
-      <p id="completedGoals">Completed: 0</p>
-
-      <p id="progressText">Power Level: 0%</p>
-
-      <div class="progress-bar">
-
-        <div
-          class="progress-fill"
-          id="progressFill">
+    <div class="left-col">
+      <!-- Goals Library Card -->
+      <div class="goals-card">
+        <div class="goals-card-banner"><h2>⚡ GOAL LIBRARY</h2></div>
+        <div class="goals-card-body">
+          <div id="lib-items"></div>
+          <button class="add-lib-btn" onclick="addLibGoal()">+ ADD GOAL</button>
         </div>
-
       </div>
 
-      <button
-        onclick="weeklyReset()"
-        class="reset-btn"
-      >
-        RESET WEEK
-      </button>
-
+      <!-- Day Cards -->
+      <div class="cards" id="cards"></div>
     </div>
 
+    <div class="stats">
+      <h2>WEEKLY POWER</h2>
+      <p id="totalGoals">Total Missions: 0</p>
+      <p id="completedGoals">Completed: 0</p>
+      <p id="subGoalStats">Sub-Missions: 0 / 0</p>
+      <p id="progressText">Power Level: 0%</p>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <button onclick="weeklyReset()" class="reset-btn">RESET WEEK</button>
+    </div>
   </div>
 
-
-
-<script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-/*
-PASTE YOUR FIREBASE CONFIG HERE
-*/
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDrRTOMBObjtMiEFEH4KAbKnuU0iImdXe0",
-  authDomain: "warrior-system.firebaseapp.com",
-  projectId: "warrior-system",
-  storageBucket: "warrior-system.firebasestorage.app",
-  messagingSenderId: "497973709801",
-  appId: "1:497973709801:web:9225d774e66634daa2d978",
-  measurementId: "G-BJE5B9HFQY"
-};
-
-const app =
-  initializeApp(firebaseConfig);
-
-const db =
-  getFirestore(app);
-
-/*
-IMAGES
-*/
-
-const animeImages = [
-
-  // Monday — Cristiano Ronaldo
-  "https://wallpapercave.com/wp/wp9986447.jpg",
-
-  // Tuesday — Virat Kohli
-  "https://wallpapercave.com/uwp/uwp5005515.jpeg",
-
-  // Wednesday — UFC fighter
-  "https://wallpapercave.com/uwp/uwp5033516.jpeg",
-
-  // Thursday — Ronaldo dark aesthetic
-  "https://wallpapercave.com/uwp/uwp5033524.jpeg",
-
-  // Friday — Virat aggressive vibe
-  "https://wallpapercave.com/uwp/uwp4975217.jpeg",
-
-  // Saturday — Conor McGregor
-  "https://wallpapercave.com/uwp/uwp4975223.jpeg",
-
-  // Sunday — Messi vs Ronaldo
-  "https://wallpapercave.com/uwp/uwp4975225.jpeg"
-
-];
-
-/*
-DEFAULT DATA
-*/
-
-const defaultData = [
-
-  {
-    day:"Monday",
-    image:animeImages[0],
-    goals:[]
-  },
-
-  {
-    day:"Tuesday",
-    image:animeImages[1],
-    goals:[]
-  },
-
-  {
-    day:"Wednesday",
-    image:animeImages[2],
-    goals:[]
-  },
-
-  {
-    day:"Thursday",
-    image:animeImages[3],
-    goals:[]
-  },
-
-  {
-    day:"Friday",
-    image:animeImages[4],
-    goals:[]
-  },
-
-  {
-    day:"Saturday",
-    image:animeImages[5],
-    goals:[]
-  },
-
-  {
-    day:"Sunday",
-    image:animeImages[6],
-    goals:[]
-  }
-
-];
-
-let data = [];
-
-/*
-LOAD DATA
-*/
-
-async function loadData(){
-
-  const ref =
-    doc(db, "warrior", "weekly");
-
-  const snap =
-    await getDoc(ref);
-
-  if(snap.exists()){
-
-    data = snap.data().days;
-
-  }else{
-
-    data = defaultData;
-
-    await saveData();
-
-  }
-
-  render();
-
-}
-
-/*
-SAVE DATA
-*/
-
-async function saveData(){
-
-  const ref =
-    doc(db, "warrior", "weekly");
-
-  await setDoc(ref, {
-
-    days:data
-
-  });
-
-}
-
-/*
-RENDER
-*/
-
-function render(){
-
-  const cards =
-    document.getElementById("cards");
-
-  cards.innerHTML = "";
-
-  let total = 0;
-
-  let completed = 0;
-
-  data.forEach((dayObj, dayIndex)=>{
-
-    total += dayObj.goals.length;
-
-    completed +=
-      dayObj.goals.filter(g=>g.done).length;
-
-    const card =
-      document.createElement("div");
-
-    card.className = "card";
-
-    card.innerHTML = `
-
-      <img src="${dayObj.image}">
-
-      <div class="card-content">
-
-        <div class="card-header">
-
-          <h2>${dayObj.day}</h2>
-
-        </div>
-
-        <div id="goals-${dayIndex}">
-        </div>
-
-        <button
-          class="add-goal"
-          onclick="addGoal(${dayIndex})"
-        >
-          + ADD MISSION
-        </button>
-
-        <p class="done-text">
-
-          COMPLETED:
-          ${dayObj.goals.filter(g=>g.done).length}
-          /
-          ${dayObj.goals.length}
-
-        </p>
-
-      </div>
-
-    `;
-
-    cards.appendChild(card);
-
-    const goalsContainer =
-      document.getElementById(
-        `goals-${dayIndex}`
-      );
-
-    dayObj.goals.forEach((goal, goalIndex)=>{
-
-      const goalDiv =
-        document.createElement("div");
-
-      goalDiv.className = "goal";
-
-      goalDiv.innerHTML = `
-
-        <div class="goal-left">
-
-          <input
-            type="checkbox"
-
-            ${goal.done ? "checked" : ""}
-
-            onchange=
-            "toggleGoal(${dayIndex}, ${goalIndex})"
-          >
-
-          <span>${goal.text}</span>
-
-        </div>
-
-        <button
-          class="delete-btn"
-          onclick=
-          "deleteGoal(${dayIndex}, ${goalIndex})"
-        >
-          ✖
-        </button>
-
-      `;
-
-      goalsContainer.appendChild(goalDiv);
-
+  <!-- Picker Modal -->
+  <div class="modal-overlay" id="pickerModal">
+    <div class="modal">
+      <h3>PICK A MISSION</h3>
+      <div id="pickerList"></div>
+      <button class="modal-close" onclick="closePicker()">CANCEL</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyDrRTOMBObjtMiEFEH4KAbKnuU0iImdXe0",
+      authDomain: "warrior-system.firebaseapp.com",
+      projectId: "warrior-system",
+      storageBucket: "warrior-system.firebasestorage.app",
+      messagingSenderId: "497973709801",
+      appId: "1:497973709801:web:9225d774e66634daa2d978"
+    });
+    const db = firebase.firestore();
+
+    const animeImages = [
+      "https://wallpapercave.com/wp/wp9986447.jpg",
+      "https://wallpapercave.com/uwp/uwp5005515.jpeg",
+      "https://wallpapercave.com/uwp/uwp5033516.jpeg",
+      "https://wallpapercave.com/uwp/uwp5033524.jpeg",
+      "https://wallpapercave.com/uwp/uwp4975217.jpeg",
+      "https://wallpapercave.com/uwp/uwp4975223.jpeg",
+      "https://wallpapercave.com/uwp/uwp4975225.jpeg"
+    ];
+    const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+    let data    = DAYS.map((day, i) => ({ day, image: animeImages[i], goals: [] }));
+    let libGoals = []; // [{ text, desc, subGoals }]
+    let openPanels = new Set();
+    let libOpenPanels = new Set();
+    let pickerTargetDay = null;
+
+    /* ══ LOAD ══ */
+    async function loadData() {
+      const [weekSnap, libSnap] = await Promise.all([
+        db.collection("warrior").doc("weekly").get(),
+        db.collection("warrior").doc("goals").get()
+      ]);
+      if (weekSnap.exists) data     = weekSnap.data().days;
+      if (libSnap.exists)  libGoals = libSnap.data().goals || [];
+      render();
+    }
+
+    async function saveWeek() { await db.collection("warrior").doc("weekly").set({ days: data }); }
+    async function saveLib()  { await db.collection("warrior").doc("goals").set({ goals: libGoals }); }
+
+    /* ══ STATS ══ */
+    function calcStats() {
+      let missions=0, mDone=0, subs=0, sDone=0;
+      data.forEach(day => {
+        day.goals.forEach(goal => {
+          missions++; if (goal.done) mDone++;
+          (goal.subGoals||[]).forEach(sg => { subs++; if(sg.done) sDone++; });
+        });
+      });
+      const total = missions + subs;
+      const pct   = total===0 ? 0 : Math.round(((mDone+sDone)/total)*100);
+      return { missions, mDone, subs, sDone, pct };
+    }
+
+    function updateStats() {
+      const { missions, mDone, subs, sDone, pct } = calcStats();
+      document.getElementById("totalGoals").innerText     = `Total Missions: ${missions}`;
+      document.getElementById("completedGoals").innerText = `Completed: ${mDone} / ${missions}`;
+      document.getElementById("subGoalStats").innerText   = `Sub-Missions: ${sDone} / ${subs}`;
+      document.getElementById("progressText").innerText   = `Power Level: ${pct}%`;
+      document.getElementById("progressFill").style.width = pct + "%";
+    }
+
+    /* ══ RENDER ══ */
+    function render() {
+      renderLib();
+      renderDays();
+      updateStats();
+    }
+
+    /* ── Goal Library ── */
+    function renderLib() {
+      const el = document.getElementById("lib-items");
+      el.innerHTML = "";
+      if (libGoals.length === 0) {
+        el.innerHTML = `<p style="color:#52525b;font-size:13px;margin-bottom:12px;">No goals yet. Add one below.</p>`;
+        return;
+      }
+      libGoals.forEach((g, gi) => {
+        const subs   = g.subGoals || [];
+        const panelId = `lib-sub-panel-${gi}`;
+        const btnId   = `lib-expand-btn-${gi}`;
+        const isOpen  = libOpenPanels.has(gi);
+
+        const subRowsHtml = subs.map((sg, sgi) => `
+          <div class="lib-sub-row">
+            <span>${escHtml(sg.text)}</span>
+            <button class="delete-btn" onclick="deleteLibSub(${gi},${sgi})">✖</button>
+          </div>`).join("");
+
+        const item = document.createElement("div");
+        item.className = "lib-item";
+        item.innerHTML = `
+          <div class="lib-item-header">
+            <span class="lib-item-title">${escHtml(g.text)}</span>
+            <div class="lib-actions">
+              <button id="${btnId}" class="lib-expand-btn ${isOpen?"open":""}"
+                onclick="toggleLibPanel(${gi})">
+                ${subs.length > 0 ? `▸ ${subs.length} sub` : "▸ sub"}
+              </button>
+              <button class="delete-btn" onclick="deleteLibGoal(${gi})" title="Delete">✖</button>
+            </div>
+          </div>
+          <div class="lib-item-desc ${g.desc ? '' : 'empty'}">${escHtml(g.desc || "")}</div>
+          <div id="${panelId}" class="lib-sub-panel ${isOpen?"open":""}">
+            ${subRowsHtml}
+            <button class="lib-add-sub-btn" onclick="addLibSub(${gi})">+ Add Sub-Goal</button>
+          </div>`;
+        el.appendChild(item);
+      });
+    }
+
+    /* ── Day Cards ── */
+    function renderDays() {
+      const cards = document.getElementById("cards");
+      cards.innerHTML = "";
+      data.forEach((dayObj, di) => {
+        const mDone    = dayObj.goals.filter(g=>g.done).length;
+        const subTotal = dayObj.goals.reduce((a,g)=>a+(g.subGoals||[]).length,0);
+        const subDoneN = dayObj.goals.reduce((a,g)=>a+(g.subGoals||[]).filter(s=>s.done).length,0);
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${dayObj.image}" alt="${dayObj.day}">
+          <div class="card-content">
+            <div class="card-header"><h2>${dayObj.day}</h2></div>
+            <div id="goals-${di}"></div>
+            <button class="add-goal-btn" onclick="openPicker(${di})">+ ADD MISSION</button>
+            <p class="done-text">
+              MISSIONS: ${mDone}/${dayObj.goals.length}
+              ${subTotal>0 ? `&nbsp;·&nbsp; SUB: ${subDoneN}/${subTotal}` : ""}
+            </p>
+          </div>`;
+        cards.appendChild(card);
+
+        const container = document.getElementById(`goals-${di}`);
+        dayObj.goals.forEach((goal, gi) => {
+          const subs   = goal.subGoals || [];
+          const sDoneN = subs.filter(s=>s.done).length;
+          const sTotal = subs.length;
+          const key    = `${di}-${gi}`;
+          const isOpen = openPanels.has(key);
+
+          const subRows = subs.map((sg, sgi) => `
+            <div class="sub-goal">
+              <div class="sub-goal-left">
+                <input type="checkbox" ${sg.done?"checked":""} onchange="toggleSub(${di},${gi},${sgi})">
+                <span>${escHtml(sg.text)}</span>
+              </div>
+              <button class="delete-btn" onclick="deleteSub(${di},${gi},${sgi})">✖</button>
+            </div>`).join("");
+
+          const subBar = sTotal>0 ? `
+            <div class="sub-progress">
+              <div class="sub-progress-fill" style="width:${Math.round(sDoneN/sTotal*100)}%"></div>
+            </div>` : "";
+
+          const block = document.createElement("div");
+          block.className = "mission-block";
+          block.innerHTML = `
+            <div class="goal">
+              <div class="goal-left">
+                <input type="checkbox" ${goal.done?"checked":""} onchange="toggleGoal(${di},${gi})">
+                <span>${escHtml(goal.text)}</span>
+              </div>
+              <div class="goal-actions">
+                <button id="expand-btn-${key}" class="expand-btn ${isOpen?"open":""}"
+                  onclick="togglePanel('${key}')">
+                  ${sTotal>0 ? `▸ ${sDoneN}/${sTotal}` : "▸ sub"}
+                </button>
+                <button class="delete-btn" onclick="deleteGoal(${di},${gi})">✖</button>
+              </div>
+            </div>
+            <div id="sub-panel-${key}" class="sub-goals-panel ${isOpen?"open":""}">
+              ${subBar}${subRows}
+              <button class="add-sub-btn" onclick="addSub(${di},${gi})">+ Add Sub-Mission</button>
+            </div>`;
+          container.appendChild(block);
+        });
+      });
+    }
+
+    /* ══ GOAL LIBRARY ACTIONS ══ */
+    async function addLibGoal() {
+      const text = prompt("Goal name:");
+      if (!text) return;
+      const desc = prompt("Description (optional):");
+      libGoals.push({ text: text.trim(), desc: (desc||"").trim() });
+      await saveLib();
+      render();
+    }
+
+    async function deleteLibGoal(gi) {
+      if (!confirm("Delete this goal from the library?")) return;
+      libOpenPanels.delete(gi);
+      libGoals.splice(gi, 1);
+      await saveLib();
+      render();
+    }
+
+    function toggleLibPanel(gi) {
+      libOpenPanels.has(gi) ? libOpenPanels.delete(gi) : libOpenPanels.add(gi);
+      document.getElementById(`lib-sub-panel-${gi}`)?.classList.toggle("open");
+      document.getElementById(`lib-expand-btn-${gi}`)?.classList.toggle("open");
+    }
+
+    async function addLibSub(gi) {
+      const text = prompt("Enter sub-goal:");
+      if (!text) return;
+      if (!libGoals[gi].subGoals) libGoals[gi].subGoals = [];
+      libGoals[gi].subGoals.push({ text: text.trim() });
+      libOpenPanels.add(gi);
+      await saveLib();
+      render();
+    }
+
+    async function deleteLibSub(gi, sgi) {
+      libGoals[gi].subGoals.splice(sgi, 1);
+      await saveLib();
+      render();
+      // re-open panel after re-render
+      libOpenPanels.add(gi);
+      document.getElementById(`lib-sub-panel-${gi}`)?.classList.add("open");
+      document.getElementById(`lib-expand-btn-${gi}`)?.classList.add("open");
+    }
+
+    /* ══ PICKER MODAL ══ */
+    function openPicker(di) {
+      pickerTargetDay = di;
+      const list = document.getElementById("pickerList");
+      list.innerHTML = "";
+
+      if (libGoals.length === 0) {
+        list.innerHTML = `<p class="modal-empty">No goals in library yet.<br>Add some in the Goal Library card first!</p>`;
+      } else {
+        libGoals.forEach((g, gi) => {
+          const item = document.createElement("div");
+          item.className = "picker-item";
+          item.innerHTML = `
+            <span>${escHtml(g.text)}</span>
+            <button class="pick-btn" onclick="pickGoal(${gi})">ADD</button>`;
+          list.appendChild(item);
+        });
+      }
+
+      document.getElementById("pickerModal").classList.add("open");
+    }
+
+    function closePicker() {
+      document.getElementById("pickerModal").classList.remove("open");
+      pickerTargetDay = null;
+    }
+
+    async function pickGoal(gi) {
+      const g = libGoals[gi];
+      const subGoals = (g.subGoals || []).map(sg => ({ text: sg.text, done: false }));
+      data[pickerTargetDay].goals.push({ text: g.text, done: false, subGoals });
+      await saveWeek();
+      closePicker();
+      render();
+    }
+
+    /* close modal on overlay click */
+    document.getElementById("pickerModal").addEventListener("click", function(e) {
+      if (e.target === this) closePicker();
     });
 
-  });
+    /* ══ DAY GOAL ACTIONS ══ */
+    async function toggleGoal(di, gi) {
+      data[di].goals[gi].done = !data[di].goals[gi].done;
+      await saveWeek(); render();
+    }
 
-  const percent =
+    async function deleteGoal(di, gi) {
+      openPanels.delete(`${di}-${gi}`);
+      data[di].goals.splice(gi, 1);
+      await saveWeek(); render();
+    }
 
-    total === 0
+    function togglePanel(key) {
+      openPanels.has(key) ? openPanels.delete(key) : openPanels.add(key);
+      document.getElementById(`sub-panel-${key}`)?.classList.toggle("open");
+      document.getElementById(`expand-btn-${key}`)?.classList.toggle("open");
+    }
 
-    ? 0
+    async function addSub(di, gi) {
+      const text = prompt("Enter sub-mission:");
+      if (!text) return;
+      if (!data[di].goals[gi].subGoals) data[di].goals[gi].subGoals = [];
+      data[di].goals[gi].subGoals.push({ text, done: false });
+      openPanels.add(`${di}-${gi}`);
+      await saveWeek(); render();
+    }
 
-    : Math.round(
-        (completed / total) * 100
-      );
+    async function toggleSub(di, gi, sgi) {
+      data[di].goals[gi].subGoals[sgi].done = !data[di].goals[gi].subGoals[sgi].done;
+      await saveWeek(); render();
+    }
 
-  document.getElementById(
-    "totalGoals"
-  ).innerText =
-    `Total Missions: ${total}`;
+    async function deleteSub(di, gi, sgi) {
+      data[di].goals[gi].subGoals.splice(sgi, 1);
+      await saveWeek(); render();
+    }
 
-  document.getElementById(
-    "completedGoals"
-  ).innerText =
-    `Completed: ${completed}`;
+    /* ══ WEEKLY RESET ══ */
+    function weeklyReset() {
+      if (!confirm("Reset all missions and sub-missions?")) return;
+      data.forEach(day => {
+        day.goals.forEach(g => {
+          g.done = false;
+          (g.subGoals||[]).forEach(sg => sg.done = false);
+        });
+      });
+      saveWeek().then(render);
+    }
 
-  document.getElementById(
-    "progressText"
-  ).innerText =
-    `Power Level: ${percent}%`;
+    /* ══ UTIL ══ */
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
 
-  document.getElementById(
-    "progressFill"
-  ).style.width =
-    percent + "%";
-
-}
-
-/*
-GOAL FUNCTIONS
-*/
-
-window.toggleGoal =
-async function(dayIndex, goalIndex){
-
-  data[dayIndex]
-  .goals[goalIndex]
-  .done =
-
-  !data[dayIndex]
-  .goals[goalIndex]
-  .done;
-
-  await saveData();
-
-  render();
-
-};
-
-window.addGoal =
-async function(dayIndex){
-
-  const text =
-    prompt("Enter mission");
-
-  if(!text) return;
-
-  data[dayIndex]
-  .goals
-  .push({
-
-    text,
-    done:false
-
-  });
-
-  await saveData();
-
-  render();
-
-};
-
-window.deleteGoal =
-async function(dayIndex, goalIndex){
-
-  data[dayIndex]
-  .goals
-  .splice(goalIndex,1);
-
-  await saveData();
-
-  render();
-
-};
-
-window.weeklyReset =
-async function(){
-
-  const confirmReset =
-    confirm(
-      "Reset all missions?"
-    );
-
-  if(!confirmReset) return;
-
-  data.forEach(day => {
-
-    day.goals.forEach(goal => {
-
-      goal.done = false;
-
-    });
-
-  });
-
-  await saveData();
-
-  render();
-
-};
-
-loadData();
-
-</script>
-
-
+    loadData();
+  </script>
 </body>
 </html>
