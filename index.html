@@ -181,6 +181,12 @@
       color:white; padding:5px 12px; border-radius:7px; cursor:pointer;
       font-size:12px; font-weight:bold; white-space:nowrap;
     }
+    .add-all-btn {
+      width:100%; border:none;
+      background:linear-gradient(90deg,#6d28d9,#f97316);
+      color:white; padding:11px; border-radius:10px; cursor:pointer;
+      font-weight:bold; letter-spacing:1px; margin-top:4px; margin-bottom:4px;
+    }
     .modal-close {
       width:100%; border:none; background:#27272a; color:#a1a1aa;
       padding:11px; border-radius:10px; cursor:pointer; margin-top:6px;
@@ -228,6 +234,7 @@
     <div class="modal">
       <h3>PICK A MISSION</h3>
       <div id="pickerList"></div>
+      <button id="addAllBtn" class="add-all-btn" onclick="addAllGoals()" style="display:none">⚡ ADD ALL</button>
       <button class="modal-close" onclick="closePicker()">CANCEL</button>
     </div>
   </div>
@@ -473,6 +480,7 @@
 
       if (libGoals.length === 0) {
         list.innerHTML = `<p class="modal-empty">No goals in library yet.<br>Add some in the Goal Library card first!</p>`;
+        document.getElementById("addAllBtn").style.display = "none";
       } else {
         libGoals.forEach((g, gi) => {
           const item = document.createElement("div");
@@ -482,6 +490,7 @@
             <button class="pick-btn" onclick="pickGoal(${gi})">ADD</button>`;
           list.appendChild(item);
         });
+        document.getElementById("addAllBtn").style.display = "block";
       }
 
       document.getElementById("pickerModal").classList.add("open");
@@ -496,6 +505,16 @@
       const g = libGoals[gi];
       const subGoals = (g.subGoals || []).map(sg => ({ text: sg.text, done: false }));
       data[pickerTargetDay].goals.push({ text: g.text, done: false, subGoals });
+      await saveWeek();
+      closePicker();
+      render();
+    }
+
+    async function addAllGoals() {
+      libGoals.forEach(g => {
+        const subGoals = (g.subGoals || []).map(sg => ({ text: sg.text, done: false }));
+        data[pickerTargetDay].goals.push({ text: g.text, done: false, subGoals });
+      });
       await saveWeek();
       closePicker();
       render();
