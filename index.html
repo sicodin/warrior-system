@@ -110,6 +110,10 @@
     .goal input[type="checkbox"] { width:18px; height:18px; accent-color:#22c55e; flex-shrink:0; }
     .goal span { font-size:15px; letter-spacing:0.5px; word-break:break-word; }
     .goal-actions { display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:8px; }
+    .mission-block { cursor:grab; }
+    .mission-block:active { cursor:grabbing; }
+    .mission-block.dragging { opacity:0.4; }
+    .mission-block.drag-over { border-color:#facc15; box-shadow:0 0 12px rgba(250,204,21,0.3); }
 
     .expand-btn { border:none; background:none; color:#71717a; cursor:pointer; font-size:13px; padding:2px 6px; border-radius:6px; white-space:nowrap; transition:color 0.2s,background 0.2s; }
     .expand-btn:hover { color:#facc15; background:#27272a; }
@@ -405,6 +409,14 @@
 
           const block = document.createElement("div");
           block.className = "mission-block";
+          block.draggable = true;
+          block.dataset.di = di;
+          block.dataset.gi = gi;
+          block.addEventListener("dragstart", onDragStart);
+          block.addEventListener("dragover",  onDragOver);
+          block.addEventListener("dragleave", onDragLeave);
+          block.addEventListener("drop",      onDrop);
+          block.addEventListener("dragend",   onDragEnd);
           block.innerHTML = `
             <div class="goal">
               <div class="goal-left">
@@ -529,6 +541,58 @@
     async function toggleGoal(di, gi) {
       data[di].goals[gi].done = !data[di].goals[gi].done;
       await saveWeek(); render();
+    }
+
+    /* ══ DRAG AND DROP ══ */
+    let dragSrc = null;
+
+    function onDragStart(e) {
+      dragSrc = this;
+      this.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+    }
+
+    function onDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      if (this !== dragSrc) this.classList.add("drag-over");
+    }
+
+    function onDragLeave() {
+      this.classList.remove("drag-over");
+    }
+
+    async function onDrop(e) {
+      e.stopPropagation();
+      this.classList.remove("drag-over");
+      if (!dragSrc || dragSrc === this) return;
+
+      const fromDi = +dragSrc.dataset.di, fromGi = +dragSrc.dataset.gi;
+      const toDi   = +this.dataset.di,   toGi   = +this.dataset.gi;
+
+      // only reorder within the same day
+      if (fromDi !== toDi) return;
+
+      const goals = data[fromDi].goals;
+      const [moved] = goals.splice(fromGi, 1);
+      goals.splice(toGi, 0, moved);
+
+      // rebuild openPanels for this day
+      const dayPanels = new Set();
+      openPanels.forEach(k => {
+        const [d] = k.split("-").map(Number);
+        if (d !== fromDi) dayPanels.add(k);
+      });
+      openPanels = dayPanels;
+
+      await saveWeek(); render();
+    }
+
+    function onDragEnd() {
+      document.querySelectorAll(".mission-block").forEach(b => {
+        b.classList.remove("dragging", "drag-over");
+      });
+      dragSrc = null;
     }
 
     async function clearDayGoals(di) {
