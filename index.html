@@ -137,6 +137,13 @@
       color:white; padding:12px; border-radius:12px;
       cursor:pointer; margin-top:12px; font-weight:bold; letter-spacing:1px;
     }
+    .clear-day-btn {
+      width:100%; border:1px solid #7f1d1d; background:transparent;
+      color:#ef4444; padding:9px; border-radius:12px;
+      cursor:pointer; margin-top:8px; font-weight:bold; letter-spacing:1px;
+      font-size:12px; transition:background 0.2s, color 0.2s;
+    }
+    .clear-day-btn:hover { background:#7f1d1d; color:#fff; }
     .done-text { margin-top:16px; color:#a1a1aa; font-weight:bold; letter-spacing:1px; font-size:13px; }
 
     /* ── STATS ── */
@@ -190,6 +197,9 @@
 
   <div class="container">
     <div class="left-col">
+      <!-- Day Cards -->
+      <div class="cards" id="cards"></div>
+
       <!-- Goals Library Card -->
       <div class="goals-card">
         <div class="goals-card-banner"><h2>⚡ GOAL LIBRARY</h2></div>
@@ -198,9 +208,6 @@
           <button class="add-lib-btn" onclick="addLibGoal()">+ ADD GOAL</button>
         </div>
       </div>
-
-      <!-- Day Cards -->
-      <div class="cards" id="cards"></div>
     </div>
 
     <div class="stats">
@@ -359,6 +366,7 @@
             <div class="card-header"><h2>${dayObj.day}</h2></div>
             <div id="goals-${di}"></div>
             <button class="add-goal-btn" onclick="openPicker(${di})">+ ADD MISSION</button>
+            <button class="clear-day-btn" onclick="clearDayGoals(${di})">🗑 CLEAR ALL GOALS</button>
             <p class="done-text">
               MISSIONS: ${mDone}/${dayObj.goals.length}
               ${subTotal>0 ? `&nbsp;·&nbsp; SUB: ${subDoneN}/${subTotal}` : ""}
@@ -501,6 +509,15 @@
     /* ══ DAY GOAL ACTIONS ══ */
     async function toggleGoal(di, gi) {
       data[di].goals[gi].done = !data[di].goals[gi].done;
+      await saveWeek(); render();
+    }
+
+    async function clearDayGoals(di) {
+      const dayName = data[di].day;
+      if (!confirm(`Delete ALL goals for ${dayName}?`)) return;
+      // clear open panels for this day
+      data[di].goals.forEach((_, gi) => openPanels.delete(`${di}-${gi}`));
+      data[di].goals = [];
       await saveWeek(); render();
     }
 
